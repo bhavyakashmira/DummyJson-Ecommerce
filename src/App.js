@@ -1,24 +1,44 @@
 import logo from './logo.svg';
-import './App.css';
+import { Route, BrowserRouter as Router , Routes ,Navigate, useNavigate } from 'react-router-dom';
+import LoginInPage from './Pages/Login';
+import SignInPage from './Pages/Sigin';
+import LandingPage from './Pages/HomePage';
+import { auth } from "../src/Firebase/Firebase.js"
+import React,{useEffect ,useState} from 'react';
+
+
 
 function App() {
+
+
+
+
+
+  const PrivateRoute = ({ children }) => {
+     
+    const navigate = useNavigate();
+    useEffect(() => {
+      let user = auth.currentUser;
+      if (!user) {
+        navigate('/login')
+      }
+    })
+
+    return  children ;
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Router>
+        <Routes>
+          <Route element={<PrivateRoute><LandingPage/></PrivateRoute>} path='/' />
+          <Route element={<SignInPage />} path='/signin' />
+          <Route element={<LoginInPage />} path='/login' />
+          <Route path='*' element={ <Navigate to='/login' />} />
+        </Routes>
+      </Router>
+      
+    </>
   );
 }
 
